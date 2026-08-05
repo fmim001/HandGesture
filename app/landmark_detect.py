@@ -74,8 +74,8 @@ class DetectLandmark:
 
                     # A. GAMBAR SKELETON TANGAN
 
-                    self.draw_hand_skeleton(frame, hand_landmarks)
-                    y_offset = 90 + (hand_idx * 50)  # Offset untuk multiple hands
+                    # self.draw_hand_skeleton(frame, hand_landmarks)
+                    # y_offset = 90 + (hand_idx * 50)  # Offset untuk multiple hands
 
 
                 return point,gesture_name

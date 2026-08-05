@@ -6,10 +6,12 @@ import time
 import mediapipe as mp
 
 import pyautogui
+import keyboard
 
 VIDEO_PATH = 'app/src/DUMMY_VIDEO.mp4'
-USE_WEBCAM = False  # Set False untuk menggunakan video file
+USE_WEBCAM = True  # Set False untuk menggunakan video file
 FPS_DISPLAY = True  # Tampilkan FPS counter
+CLOSED_WINDOWS = False  # Set True untuk menutup semua jendela OpenCV saat keluar
 
 
 
@@ -21,7 +23,7 @@ class MyApp:
         pass        
 
     def main(self):     
-
+        global CLOSED_WINDOWS
         if USE_WEBCAM:
             cap = cv2.VideoCapture(0)
             print("📷 Menggunakan Webcam...")
@@ -66,30 +68,37 @@ class MyApp:
             point,gesture_name = self.hand.run(frame,mp_image,frame_timestamp_ms)
             if point and gesture_name:
                 self.pointer.ActionMove(point,gesture_name)
-                
-                
-            if  USE_WEBCAM:
-                display_frame = cv2.resize(frame, (540,960))
-                cv2.imshow('Deteksi Gesture Tangan (MediaPipe)', display_frame)
-            else:
-                cv2.imshow('Deteksi Gesture Tangan (MediaPipe)', frame)
-            
+
+            if not CLOSED_WINDOWS:
+                if  not USE_WEBCAM:
+                    display_frame = cv2.resize(frame, (540,960))
+                    cv2.imshow('Deteksi Gesture Tangan (MediaPipe)', display_frame)
+                else:
+                    cv2.imshow('Deteksi Gesture Tangan (MediaPipe)', frame)
+            else :
+                # cap.release()
+                cv2.destroyAllWindows()
             # ====================================================================
             # 6. INPUT HANDLING
             # ====================================================================
             
             key = cv2.waitKey(5) & 0xFF
-            if key == ord('q'):
+            if key == ord('x'):
+                CLOSED_WINDOWS = True
+                print("🪟 Menutup semua jendela OpenCV...")
+
+            if keyboard.is_pressed('q'):
                 print("\n👋 Keluar dari program...")
                 break
             # elif key == ord('r'):
             #     gesture_history.clear()
             #     print("🔄 History gesture direset")
-            elif key == ord('s'):
-                # Screenshot
-                filename = f"gesture_screenshot_{int(time.time())}.png"
-                cv2.imwrite(filename, frame)
-                print(f"📸 Screenshot tersimpan: {filename}")
+            # elif key == ord('s'):
+            #     # Screenshot
+            #     filename = f"gesture_screenshot_{int(time.time())}.png"
+            #     cv2.imwrite(filename, frame)
+            #     print(f"📸 Screenshot tersimpan: {filename}")
+            
 
             # ========================================================================
             # CLEANUP
